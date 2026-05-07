@@ -1,0 +1,147 @@
+@media (max-width: 1024px) {
+  .app-shell {
+    padding: 0.55rem;
+  }
+
+  .home-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .clock-panel {
+    justify-items: start;
+  }
+
+  .tabs-container {
+    max-width: calc(100vw - 120px);
+  }
+}
+
+@media (max-width: 768px) {
+  .browser-header {
+    gap: 0.5rem;
+  }
+
+  .brand-text span {
+    display: none;
+  }
+
+  .toolbar-main {
+    grid-template-columns: 1fr auto;
+  }
+
+  .nav-group {
+    display: none;
+  }
+
+  .action-group {
+    gap: 0.25rem;
+  }
+
+  .icon-btn.toolbar-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .tabs-row {
+    min-height: 50px;
+  }
+
+  .tabs-container {
+    scroll-snap-type: x mandatory;
+  }
+
+  .tab-item {
+    min-width: 152px;
+    max-width: 172px;
+  }
+
+  .home-page {
+    padding: 0.6rem;
+  }
+
+  .three-scene,
+  .three-fallback {
+    display: none;
+  }
+
+  .hero-panel {
+    min-height: 220px;
+  }
+
+  .quick-access-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .settings-drawer {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    border-radius: 0;
+    transform: translateY(100%);
+  }
+
+  .settings-drawer.open {
+    transform: translateY(0);
+  }
+
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-tabs {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    grid-template-columns: repeat(5, 1fr);
+    display: grid;
+  }
+
+  .settings-tab {
+    text-align: center;
+    font-size: 0.68rem;
+    padding: 0.35rem;
+  }
+
+  .pip-window {
+    width: min(300px, calc(100vw - 1rem));
+  }
+
+  .devtools-panel {
+    left: 0.4rem;
+    right: 0.4rem;
+    bottom: 0.4rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .brand-text strong {
+    font-size: 0.86rem;
+  }
+
+  .brand-text {
+    min-width: 0;
+  }
+
+  .toolbar-main {
+    gap: 0.35rem;
+  }
+
+  .action-group #shareBtn,
+  .action-group #bookmarkToggleBtn,
+  .action-group #readerBtn,
+  .action-group #pipBtn {
+    display: none;
+  }
+
+  .address-bar {
+    min-height: 44px;
+  }
+
+  .tabs-container {
+    max-width: calc(100vw - 95px);
+  }
+
+  .recent-row {
+    grid-auto-columns: minmax(150px, 1fr);
+  }
+}

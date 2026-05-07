@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="NEXORA - Beyond the Horizon" />
+  <title>NEXORA Browser</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236C63FF'/%3E%3Cstop offset='1' stop-color='%2300F5FF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='29' fill='%23080810' stroke='url(%23g)' stroke-width='4'/%3E%3Cpath d='M18 46V18l28 28V18' fill='none' stroke='url(%23g)' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/themes.css" />
+  <link rel="stylesheet" href="./css/animations.css" />
+  <link rel="stylesheet" href="./css/glassmorphism.css" />
+  <link rel="stylesheet" href="./css/responsive.css" />
+</head>
+<body class="mode-system theme-nexora-dark font-outfit density-normal">
+  <div id="wallpaperLayer" aria-hidden="true"></div>
+  <div id="wallpaperOverlay" aria-hidden="true"></div>
+  <canvas id="particleCanvas" aria-hidden="true"></canvas>
+  <div class="mesh-gradient" aria-hidden="true"></div>
+
+  <div class="app-shell" id="appShell">
+    <header class="browser-header glass-panel" id="browserHeader">
+      <div class="brand-block" aria-label="NEXORA">
+        <div class="logo-wrap" title="NEXORA">
+          <svg class="logo-svg" viewBox="0 0 80 80" role="img" aria-label="NEXORA logo">
+            <defs>
+              <linearGradient id="logoGradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#6C63FF" />
+                <stop offset="1" stop-color="#00F5FF" />
+              </linearGradient>
+            </defs>
+            <circle cx="40" cy="40" r="25" class="logo-orbit" />
+            <path d="M24 56V24l32 32V24" class="logo-n" />
+            <ellipse cx="40" cy="40" rx="34" ry="14" class="logo-ring" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <strong>NEXORA</strong>
+          <span>Beyond the Horizon</span>
+        </div>
+      </div>
+
+      <div class="toolbar-main">
+        <div class="nav-group">
+          <button id="backBtn" class="icon-btn toolbar-btn" type="button" data-tooltip="Wstecz" aria-label="Wstecz">
+            <i data-lucide="arrow-left"></i>
+          </button>
+          <button id="forwardBtn" class="icon-btn toolbar-btn" type="button" data-tooltip="Dalej" aria-label="Dalej">
+            <i data-lucide="arrow-right"></i>
+          </button>
+          <button id="refreshBtn" class="icon-btn toolbar-btn" type="button" data-tooltip="Odswiez" aria-label="Odswiez">
+            <i data-lucide="refresh-cw"></i>
+          </button>
+          <button id="homeBtn" class="icon-btn toolbar-btn" type="button" data-tooltip="Strona glowna" aria-label="Strona glowna">
+            <i data-lucide="house"></i>
+          </button>
+        </div>
+
+        <form id="addressForm" class="address-bar" autocomplete="off">
+          <span id="lockIndicator" class="lock-indicator lock-none" data-tooltip="Brak statusu">
+            <i data-lucide="shield"></i>
+          </span>
+          <input id="addressInput" type="text" spellcheck="false" placeholder="Wpisz adres lub wyszukaj..." aria-label="Pasek adresu" />
+          <button id="goBtn" class="icon-btn tiny" type="submit" aria-label="Przejdz">
+            <i data-lucide="corner-down-left"></i>
+          </button>
+          <ul id="addressAutocomplete" class="autocomplete-list hidden" role="listbox" aria-label="Podpowiedzi adresu"></ul>
+        </form>
+
+        <div class="action-group">
+          <button id="bookmarkToggleBtn" class="icon-btn toolbar-btn" type="button" data-tooltip="Dodaj zakladke" aria-label="Dodaj zakladke">
+            <i data-lucide="star"></i>
+          </button>
+          <button id="shareBtn" class="icon-btn toolbar-btn" type="button" data-tooltip="Udostepnij" aria-label="Udostepnij">
+            <i data-lucide="share-2"></i>
+          </button>
+          <button id="readerBtn" class="icon-btn toolbar-btn" type="button" data-tooltip="Reader mode" aria-label="Reader mode">
+            <i data-lucide="book-open-text"></i>
+          </button>
+          <button id="pipBtn" class="icon-btn toolbar-btn" type="button" data-tooltip="Picture in Picture" aria-label="Picture in Picture">
+            <i data-lucide="picture-in-picture-2"></i>
+          </button>
+          <button id="findBtn" class="icon-btn toolbar-btn" type="button" data-tooltip="Znajdz na stronie" aria-label="Znajdz na stronie">
+            <i data-lucide="search"></i>
+          </button>
+          <button id="menuToggleBtn" class="icon-btn menu-toggle" type="button" data-tooltip="Menu" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="tabs-row glass-inner">
+        <div id="tabsContainer" class="tabs-container" role="tablist" aria-label="Karty"></div>
+        <button id="newTabBtn" class="icon-btn add-tab-btn" type="button" data-tooltip="Nowa karta" aria-label="Nowa karta">
+          <i data-lucide="plus"></i>
+        </button>
+      </div>
+
+      <div class="progress-track" aria-hidden="true">
+        <div id="loadingBar" class="progress-bar"></div>
+      </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+      <section id="homePage" class="home-page active-view" aria-label="NEXORA Start">
+        <div class="home-grid">
+          <article class="hero-panel glass-panel stagger-item">
+            <div id="threeSceneContainer" class="three-scene" aria-label="Model 3D"></div>
+            <div id="threeFallback" class="three-fallback hidden" aria-hidden="true"></div>
+            <form id="homeSearchForm" class="home-search-form">
+              <div class="home-search-icon"><i data-lucide="search"></i></div>
+              <input id="homeSearchInput" type="text" placeholder="Szukaj z NEXORA" aria-label="Wyszukiwanie" />
+              <button type="submit" class="action-btn"><span data-i18n="search">Szukaj</span></button>
+            </form>
+          </article>
+
+          <article class="clock-panel glass-panel stagger-item">
+            <p class="clock-title" data-i18n="clock">Zegar</p>
+            <div class="digital-clock" id="digitalClock">--:--:--</div>
+            <div class="clock-date" id="fullDate">--</div>
+            <div class="clock-zone" id="clockZoneLabel">Europe/Warsaw</div>
+            <svg id="analogClock" class="analog-clock" viewBox="0 0 200 200" aria-label="Zegar analogowy">
+              <circle cx="100" cy="100" r="82" class="clock-face"></circle>
+              <g id="clockTicks"></g>
+              <line id="hourHand" x1="100" y1="100" x2="100" y2="62" class="clock-hand hour"></line>
+              <line id="minuteHand" x1="100" y1="100" x2="100" y2="44" class="clock-hand minute"></line>
+              <line id="secondHand" x1="100" y1="104" x2="100" y2="30" class="clock-hand second"></line>
+              <circle cx="100" cy="100" r="4" class="clock-center"></circle>
+            </svg>
+            <div id="worldClocks" class="world-clocks"></div>
+          </article>
+        </div>
+
+        <article class="quick-access-panel glass-panel stagger-item">
+          <div class="section-head">
+            <h2 data-i18n="quick_access">Quick Access</h2>
+            <button id="addShortcutBtn" class="icon-btn tiny" type="button" aria-label="Dodaj skrot">
+              <i data-lucide="plus"></i>
+            </button>
+          </div>
+          <div id="quickAccessGrid" class="quick-access-grid"></div>
+        </article>
+
+        <article class="recent-panel glass-panel stagger-item">
+          <div class="section-head">
+            <h2 data-i18n="recent">Ostatnio odwiedzone</h2>
+          </div>
+          <div id="recentVisitedRow" class="recent-row"></div>
+        </article>
+      </section>
+
+      <section id="tabWorkspace" class="tab-workspace" aria-label="Przestrzen kart"></section>
+    </main>
+  </div>
+
+  <aside id="settingsDrawer" class="settings-drawer glass-panel" aria-hidden="true">
+    <header class="settings-header">
+      <div>
+        <h2>NEXORA Settings</h2>
+        <p>Beyond the Horizon</p>
+      </div>
+      <button id="closeSettingsBtn" class="icon-btn" type="button" aria-label="Zamknij ustawienia">
+        <i data-lucide="x"></i>
+      </button>
+    </header>
+
+    <div class="settings-layout">
+      <nav class="settings-tabs" aria-label="Zakladki ustawien">
+        <button class="settings-tab active" data-settings-tab="general" type="button">Ogolne</button>
+        <button class="settings-tab" data-settings-tab="appearance" type="button">Wyglad</button>
+        <button class="settings-tab" data-settings-tab="privacy" type="button">Prywatnosc</button>
+        <button class="settings-tab" data-settings-tab="shortcuts" type="button">Skroty</button>
+        <button class="settings-tab" data-settings-tab="advanced" type="button">Zaawansowane</button>
+      </nav>
+
+      <div class="settings-content">
+        <section class="settings-panel active" id="settings-general" data-tab="general">
+          <label><span>Jezyk</span>
+            <select id="languageSelect"></select>
+          </label>
+          <label><span>Kraj</span>
+            <select id="countrySelect"></select>
+          </label>
+          <label><span>Strefa czasowa</span>
+            <select id="timeZoneSelect"></select>
+          </label>
+          <label><span>Dodatkowe zegary (max 4)</span>
+            <select id="worldClockAddSelect"></select>
+            <button id="addWorldClockBtn" class="action-btn subtle" type="button">Dodaj strefe</button>
+          </label>
+          <div id="worldClockList" class="list-box"></div>
+          <label><span>Domyslna strona startowa</span>
+            <select id="startupModeSelect">
+              <option value="nexora">NEXORA Start</option>
+              <option value="custom">Wlasny URL</option>
+            </select>
+          </label>
+          <label><span>Wlasny URL startowy</span>
+            <input id="startupUrlInput" type="url" placeholder="https://example.com" />
+          </label>
+          <label><span>Wyszukiwarka</span>
+            <select id="searchEngineSelect">
+              <option value="google">Google</option>
+              <option value="bing">Bing</option>
+              <option value="duckduckgo">DuckDuckGo</option>
+              <option value="brave">Brave</option>
+              <option value="ecosia">Ecosia</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="settings-panel" id="settings-appearance" data-tab="appearance">
+          <div class="theme-card-grid" id="themeCardGrid"></div>
+          <label><span>Tryb kolorow</span>
+            <select id="modeSelect">
+              <option value="system">Auto</option>
+              <option value="dark">Ciemny</option>
+              <option value="light">Jasny</option>
+            </select>
+          </label>
+          <label><span>Kolor akcentu</span>
+            <input id="accentColorInput" type="color" value="#6c63ff" />
+          </label>
+          <div id="accentQuickPicks" class="accent-picks"></div>
+          <label><span>Czcionka</span>
+            <select id="fontSelect">
+              <option value="outfit">Outfit</option>
+              <option value="inter">Inter</option>
+              <option value="jetbrains">JetBrains Mono</option>
+            </select>
+          </label>
+          <label><span>Rozmiar czcionki (px)</span>
+            <input id="fontSizeRange" type="range" min="12" max="20" step="1" />
+          </label>
+          <label><span>Gestosc UI</span>
+            <select id="densitySelect">
+              <option value="comfortable">Komfortowa</option>
+              <option value="normal">Normalna</option>
+              <option value="compact">Kompaktowa</option>
+            </select>
+          </label>
+
+          <div class="wallpaper-group">
+            <p>Tapeta</p>
+            <div class="inline-actions">
+              <button id="chooseWallpaperBtn" class="action-btn subtle" type="button">Wybierz z dysku</button>
+              <button id="removeWallpaperBtn" class="action-btn subtle" type="button">Usun tapete</button>
+              <input id="wallpaperInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+            </div>
+            <div id="wallpaperPresetGrid" class="wallpaper-presets"></div>
+            <div class="wallpaper-preview-wrap">
+              <div id="wallpaperPreview" class="wallpaper-preview"></div>
+            </div>
+            <label><span>Przyciemnienie</span><input id="wallpaperDimRange" type="range" min="0" max="80" step="1" /></label>
+            <label><span>Blur</span><input id="wallpaperBlurRange" type="range" min="0" max="20" step="1" /></label>
+            <label><span>Dopasowanie</span>
+              <select id="wallpaperFitSelect">
+                <option value="cover">cover</option>
+                <option value="contain">contain</option>
+                <option value="tile">tile</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="settings-panel" id="settings-privacy" data-tab="privacy">
+          <label class="toggle-row"><span>Blokada reklam</span><input id="adBlockToggle" type="checkbox" /><span class="toggle-ui"></span></label>
+          <label class="toggle-row"><span>Blokada trackerow</span><input id="trackerToggle" type="checkbox" /><span class="toggle-ui"></span></label>
+          <label class="toggle-row"><span>Tryb incognito</span><input id="incognitoToggle" type="checkbox" /><span class="toggle-ui"></span></label>
+          <button id="clearHistoryBtn" class="action-btn subtle" type="button">Wyczysc historie</button>
+          <button id="clearBookmarksBtn" class="action-btn subtle" type="button">Wyczysc zakladki</button>
+          <button id="exportDataBtn" class="action-btn subtle" type="button">Eksport danych JSON</button>
+          <button id="importDataBtn" class="action-btn subtle" type="button">Import danych JSON</button>
+          <input id="importDataInput" type="file" accept="application/json" hidden />
+          <div class="list-box" id="historyList"></div>
+          <div class="list-box" id="bookmarksList"></div>
+        </section>
+
+        <section class="settings-panel" id="settings-shortcuts" data-tab="shortcuts">
+          <table class="shortcut-table">
+            <thead><tr><th>Klawisz</th><th>Akcja</th></tr></thead>
+            <tbody>
+              <tr><td>Ctrl+T</td><td>Nowa karta</td></tr>
+              <tr><td>Ctrl+W</td><td>Zamknij karte</td></tr>
+              <tr><td>Ctrl+L</td><td>Fokus paska adresu</td></tr>
+              <tr><td>Ctrl+D</td><td>Dodaj zakladke</td></tr>
+              <tr><td>Ctrl+H</td><td>Historia</td></tr>
+              <tr><td>Ctrl+F</td><td>Znajdz na stronie</td></tr>
+              <tr><td>Ctrl+Shift+N</td><td>Incognito</td></tr>
+              <tr><td>Ctrl+Tab</td><td>Nastepna karta</td></tr>
+              <tr><td>F11</td><td>Pelny ekran</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="settings-panel" id="settings-advanced" data-tab="advanced">
+          <label><span>Domyslny zoom iframe</span><input id="zoomRange" type="range" min="50" max="200" step="10" /></label>
+          <label class="toggle-row"><span>Devtools panel</span><input id="devtoolsToggle" type="checkbox" /><span class="toggle-ui"></span></label>
+          <div class="list-box" id="extensionsList"></div>
+          <div class="about-box">
+            <p><strong>NEXORA</strong> v1.0.0</p>
+            <p>Static Browser UI for GitHub Pages</p>
+            <p>Credits: Lucide, Three.js</p>
+          </div>
+          <button id="resetSettingsBtn" class="action-btn subtle danger" type="button">Reset ustawien</button>
+        </section>
+      </div>
+    </div>
+  </aside>
+
+  <section id="devtoolsPanel" class="devtools-panel glass-panel" aria-hidden="true">
+    <header>
+      <div class="devtools-tabs">
+        <button class="dev-tab active" data-devtab="elements">Elements</button>
+        <button class="dev-tab" data-devtab="console">Console</button>
+        <button class="dev-tab" data-devtab="network">Network</button>
+        <button class="dev-tab" data-devtab="storage">Storage</button>
+      </div>
+      <button id="closeDevtoolsBtn" class="icon-btn tiny" type="button" aria-label="Zamknij devtools"><i data-lucide="x"></i></button>
+    </header>
+    <div class="dev-content">
+      <pre class="dev-pane active" id="dev-elements">&lt;div class="nexora"&gt;...&lt;/div&gt;</pre>
+      <pre class="dev-pane" id="dev-console">[info] NEXORA started</pre>
+      <div class="dev-pane" id="dev-network"><table><thead><tr><th>Request</th><th>Status</th><th>Type</th><th>Time</th></tr></thead><tbody></tbody></table></div>
+      <pre class="dev-pane" id="dev-storage">localStorage: nexora.browser.v2</pre>
+    </div>
+  </section>
+
+  <section id="readerOverlay" class="reader-overlay hidden" aria-hidden="true">
+    <article class="reader-card glass-panel">
+      <header>
+        <h3>Reader Mode</h3>
+        <button id="closeReaderBtn" class="icon-btn tiny" type="button" aria-label="Zamknij"><i data-lucide="x"></i></button>
+      </header>
+      <div id="readerContent"></div>
+    </article>
+  </section>
+
+  <section id="pipWindow" class="pip-window hidden glass-panel" aria-hidden="true">
+    <header id="pipDragHandle">
+      <span>Picture in Picture</span>
+      <button id="closePipBtn" class="icon-btn tiny" type="button"><i data-lucide="x"></i></button>
+    </header>
+    <iframe id="pipFrame" title="PiP"></iframe>
+  </section>
+
+  <section id="findBar" class="find-bar hidden glass-panel" aria-hidden="true">
+    <input id="findInput" type="search" placeholder="Znajdz na stronie..." />
+    <button id="findPrevBtn" class="icon-btn tiny" type="button"><i data-lucide="chevron-up"></i></button>
+    <button id="findNextBtn" class="icon-btn tiny" type="button"><i data-lucide="chevron-down"></i></button>
+    <button id="closeFindBtn" class="icon-btn tiny" type="button"><i data-lucide="x"></i></button>
+  </section>
+
+  <ul id="contextMenu" class="context-menu hidden">
+    <li data-action="new-tab">Nowa karta</li>
+    <li data-action="reload">Odswiez</li>
+    <li data-action="reader">Reader mode</li>
+    <li data-action="copy-link">Kopiuj URL</li>
+  </ul>
+
+  <ul id="shortcutContextMenu" class="context-menu hidden">
+    <li data-shortcut-action="open">Otworz</li>
+    <li data-shortcut-action="edit">Edytuj</li>
+    <li data-shortcut-action="remove">Usun</li>
+  </ul>
+
+  <div id="incognitoBanner" class="incognito-banner hidden">Tryb Incognito aktywny</div>
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
